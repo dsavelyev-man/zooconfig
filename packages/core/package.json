@@ -1,6 +1,6 @@
 {
   "name": "@zooconfig/core",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "homepage": "https://zooconfig.vercel.app/",
   "description": "Plugin-based Node.js configuration loader. Core parses JSON and composes parsers supplied by plugins.",
   "type": "module",
