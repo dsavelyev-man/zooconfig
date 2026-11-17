@@ -1,5 +1,7 @@
 # @zooconfig/dotenv
 
+Documentation: [zooconfig.vercel.app](https://zooconfig.vercel.app/)
+
 Dotenv parser plugin for [`@zooconfig/core`](https://www.npmjs.com/package/@zooconfig/core).
 It reads `.env`-formatted files as configuration objects.
 

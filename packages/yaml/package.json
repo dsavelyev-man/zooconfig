@@ -1,6 +1,7 @@
 {
   "name": "@zooconfig/yaml",
   "version": "0.1.0",
+  "homepage": "https://zooconfig.vercel.app/",
   "description": "YAML parser plugin for @zooconfig/core.",
   "type": "module",
   "main": "./dist/index.js",

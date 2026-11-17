@@ -1,5 +1,7 @@
 # @zooconfig/jsonc
 
+Documentation: [zooconfig.vercel.app](https://zooconfig.vercel.app/)
+
 JSONC parser plugin for [`@zooconfig/core`](https://www.npmjs.com/package/@zooconfig/core).
 JSONC supports comments and trailing commas.
 

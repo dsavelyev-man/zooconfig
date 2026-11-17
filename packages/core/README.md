@@ -1,5 +1,7 @@
 # @zooconfig/core
 
+Documentation: [zooconfig.vercel.app](https://zooconfig.vercel.app/)
+
 Plugin-based configuration for Node.js. Core parses JSON and provides discovery,
 deep merging, environment/local overlays, dotenv loading, env-var overrides,
 interpolation, validation, caching, and a CLI.

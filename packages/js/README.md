@@ -1,5 +1,7 @@
 # @zooconfig/js
 
+Documentation: [zooconfig.vercel.app](https://zooconfig.vercel.app/)
+
 JavaScript and TypeScript parser plugin for
 [`@zooconfig/core`](https://www.npmjs.com/package/@zooconfig/core), powered by jiti.
 

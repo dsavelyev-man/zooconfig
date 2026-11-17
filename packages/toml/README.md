@@ -1,5 +1,7 @@
 # @zooconfig/toml
 
+Documentation: [zooconfig.vercel.app](https://zooconfig.vercel.app/)
+
 TOML parser plugin for [`@zooconfig/core`](https://www.npmjs.com/package/@zooconfig/core).
 
 ## Install
