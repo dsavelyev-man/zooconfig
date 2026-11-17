@@ -1,0 +1,30 @@
+# Zooconfig
+
+A plugin-based configuration system for Node.js. Zooconfig gives you one predictable config object, built-in discovery and environment layering, and parser plugins only when your project needs another file format.
+
+```ts
+import { loadConfig } from '@zooconfig/core'
+import yamlPlugin from '@zooconfig/yaml'
+
+const config = await loadConfig({
+  plugins: [yamlPlugin],
+})
+
+console.log(config.app.port)
+```
+
+## Why Zooconfig?
+
+- **One API, many formats.** Use JSON out of the box, then add YAML, TOML, JSONC, dotenv, or JavaScript and TypeScript support with plugins.
+- **Predictable layering.** Base configs, `$env` blocks, environment overlays, local overlays, and environment variables resolve in a fixed order.
+- **Safe by default.** Dotenv files are read without mutating `process.env`, arrays replace instead of concatenate, and unresolved interpolation throws.
+- **Typed where you need it.** Any Zod-compatible schema or custom `validate()` function can produce the final config value.
+- **Small core.** Format-specific dependencies stay in the plugin packages.
+
+## Explore the docs
+
+- [Get started](/getting-started) with JSON or your preferred config format.
+- Understand [discovery, overlays, and precedence](/configuration).
+- Learn about [dotenv, `$env`, and environment variable overrides](/environment).
+- Add [schema validation](/validation) or build a [custom parser plugin](/plugins).
+- Browse the [API reference](/api) and [CLI reference](/cli).

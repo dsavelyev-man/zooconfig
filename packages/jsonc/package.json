@@ -1,0 +1,27 @@
+{
+  "name": "@zooconfig/jsonc",
+  "version": "0.1.0",
+  "description": "JSONC parser plugin for @zooconfig/core.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": ["dist", "README.md", "LICENSE"],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "engines": {"node": ">=18.18"},
+  "license": "MIT",
+  "dependencies": {"jsonc-parser": "^3.3.1"},
+  "peerDependencies": {"@zooconfig/core": "^0.1.0"},
+  "sideEffects": false
+}

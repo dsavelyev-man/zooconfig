@@ -1,0 +1,15 @@
+{
+  "app": {
+    "name": "json-example",
+    "url": "http://${HOST:-localhost}:${PORT:-3000}"
+  },
+  "database": {
+    "url": "postgres://localhost/example",
+    "pool": 10
+  },
+  "$env": {
+    "production": {
+      "database": { "pool": 50 }
+    }
+  }
+}

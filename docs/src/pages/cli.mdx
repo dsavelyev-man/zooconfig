@@ -1,0 +1,57 @@
+# CLI
+
+`@zooconfig/core` installs a `zooconfig` binary that prints the fully resolved config as JSON. Parser plugins must be registered explicitly.
+
+```sh
+npx zooconfig --plugin @zooconfig/yaml --config ./zooconfig.yaml --env production
+```
+
+## Options
+
+```text
+-c, --config <file>    Explicit config file
+-n, --name <name>      Config file stem to discover (repeatable)
+-p, --plugin <module>  Parser plugin module (repeatable)
+-e, --env <name>       Environment name
+    --cwd <dir>        Working directory
+    --prefix <prefix>  Env-var override prefix
+    --no-dotenv        Skip .env files
+    --no-overlays      Skip environment/local overlays
+-h, --help             Show help
+-v, --version          Show version
+```
+
+## Examples
+
+Discover a YAML config in the current directory:
+
+```sh
+npx zooconfig --plugin @zooconfig/yaml
+```
+
+Print a production config:
+
+```sh
+npx zooconfig \
+  --plugin @zooconfig/yaml \
+  --config ./config/app.yaml \
+  --env production
+```
+
+Load multiple plugin formats:
+
+```sh
+npx zooconfig \
+  --plugin @zooconfig/jsonc \
+  --plugin @zooconfig/yaml \
+  --plugin @zooconfig/toml
+```
+
+Use a custom environment override prefix:
+
+```sh
+SERVICE_APP__PORT=4000 \
+  npx zooconfig --plugin @zooconfig/yaml --prefix SERVICE_
+```
+
+The CLI always writes JSON, so core does not need a YAML or TOML serializer. Validation is not exposed as a CLI option; use the programmatic API when you need a schema or custom validator.

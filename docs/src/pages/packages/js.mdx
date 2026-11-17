@@ -1,0 +1,63 @@
+# JavaScript & TypeScript
+
+The JavaScript plugin loads `.js`, `.mjs`, `.cjs`, `.ts`, `.mts`, `.cts`, `.jsx`, and `.tsx` config modules through jiti.
+
+## Install
+
+```sh
+npm install @zooconfig/core @zooconfig/js
+```
+
+## Use
+
+```ts
+import { loadConfig } from '@zooconfig/core'
+import jsPlugin from '@zooconfig/js'
+
+const config = await loadConfig({
+  plugins: [jsPlugin],
+})
+```
+
+## Config modules
+
+A module may export an object, a promise, or a function:
+
+```ts
+export default async ({ env, cwd }: { env: string; cwd: string }) => ({
+  env,
+  cwd,
+  production: env === 'production',
+})
+```
+
+The factory context contains the active `env`, resolved `cwd`, and absolute config `file` path.
+
+## Type helper
+
+Use `defineConfig()` to preserve the shape of a typed config:
+
+```ts
+import { defineConfig } from '@zooconfig/core'
+
+export default defineConfig({
+  app: {
+    port: 3000,
+  },
+  $env: {
+    production: {
+      app: { port: 8080 },
+    },
+  },
+})
+```
+
+## Security
+
+JavaScript and TypeScript configs execute code. Only load files from trusted sources.
+
+## CLI
+
+```sh
+npx zooconfig --plugin @zooconfig/js --config ./zooconfig.ts
+```

@@ -1,0 +1,114 @@
+# API
+
+All public API functions are exported from `@zooconfig/core`.
+
+## `loadConfig(options?)`
+
+Loads and resolves a config, returning only the final config value.
+
+```ts
+import { loadConfig } from '@zooconfig/core'
+
+const config = await loadConfig<{
+  app: { port: number }
+}>()
+```
+
+## `loadConfigWithMeta(options?)`
+
+Returns the resolved config plus resolution metadata:
+
+```ts
+import { loadConfigWithMeta } from '@zooconfig/core'
+
+const { config, env, cwd, files } = await loadConfigWithMeta()
+```
+
+| Property | Type | Description |
+| --- | --- | --- |
+| `config` | `T` | Final resolved config |
+| `env` | `string` | Active environment |
+| `cwd` | `string` | Resolved working directory |
+| `files` | `string[]` | Base file followed by loaded overlays |
+
+## `createConfigLoader(options?)`
+
+Creates a cached async loader. Concurrent and subsequent calls share the same promise until `clear()` is called.
+
+```ts
+import { createConfigLoader } from '@zooconfig/core'
+
+const load = createConfigLoader<{ port: number }>({
+  dotenv: false,
+})
+
+const first = await load()
+const second = await load()
+
+// first === second
+load.clear()
+```
+
+## `defineConfig(config)`
+
+Returns its input and preserves its type. It is useful for typed JavaScript and TypeScript config modules:
+
+```ts
+import { defineConfig } from '@zooconfig/core'
+
+export default defineConfig({
+  app: { port: 3000 },
+  $env: {
+    production: {
+      app: { port: 8080 },
+    },
+  },
+})
+```
+
+## `LoadConfigOptions`
+
+| Option | Default | Description |
+| --- | --- | --- |
+| `file` | discovered | Explicit config file |
+| `cwd` | `process.cwd()` | Working directory for discovery and dotenv |
+| `env` | `NODE_ENV` or `development` | Active environment |
+| `names` | `['zooconfig', 'app.config']` | Config file stems to discover |
+| `extensions` | JSON plus plugin extensions | Extensions to search |
+| `plugins` | `[]` | Parser plugins |
+| `searchUp` | `true` | Search parent directories |
+| `overlays` | `true` | Load environment and local overlays |
+| `mergeArrays` | `false` | Concatenate arrays while merging |
+| `dotenv` | `true` | Read `.env` files |
+| `envPrefix` | `APP_` | Prefix for environment overrides |
+| `envSeparator` | `__` | Separator for nested override paths |
+| `expandEnv` | `true` | Expand `${VAR}` references |
+| `missingEnv` | `throw` | `throw`, `ignore`, or `empty` |
+| `packageField` | `zooconfig` | Field read from `package.json` |
+| `validate` | — | Custom async or sync validator |
+| `schema` | — | Zod-compatible schema |
+| `logger` | — | Logger used for non-fatal warnings |
+
+## Types
+
+Core exports these public types:
+
+```ts
+import type {
+  ConfigContext,
+  ConfigFactory,
+  ConfigModule,
+  ConfigObject,
+  ConfigParserContext,
+  ConfigSafeSchema,
+  ConfigSchema,
+  ConfigWithEnvironments,
+  DeepPartial,
+  EnvironmentMap,
+  LoadConfigOptions,
+  LoadedConfig,
+  Logger,
+  MaybePromise,
+  ZooconfigPlugin,
+} from '@zooconfig/core'
+```

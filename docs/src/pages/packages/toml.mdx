@@ -1,0 +1,38 @@
+# TOML
+
+The TOML plugin handles `.toml` files and overlays such as `zooconfig.production.toml`.
+
+## Install
+
+```sh
+npm install @zooconfig/core @zooconfig/toml
+```
+
+## Use
+
+```ts
+import { loadConfig } from '@zooconfig/core'
+import tomlPlugin from '@zooconfig/toml'
+
+const config = await loadConfig({
+  plugins: [tomlPlugin],
+})
+```
+
+## Example
+
+```toml
+[app]
+name = "toml-example"
+port = 3000
+
+[database]
+url = "postgres://localhost/example"
+pool = 10
+```
+
+## CLI
+
+```sh
+npx zooconfig --plugin @zooconfig/toml --config ./zooconfig.toml
+```

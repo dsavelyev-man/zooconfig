@@ -1,0 +1,38 @@
+# JSONC
+
+The JSONC plugin handles `.jsonc` files with comments and trailing commas. It does not replace the built-in `.json` parser.
+
+## Install
+
+```sh
+npm install @zooconfig/core @zooconfig/jsonc
+```
+
+## Use
+
+```ts
+import { loadConfig } from '@zooconfig/core'
+import jsoncPlugin from '@zooconfig/jsonc'
+
+const config = await loadConfig({
+  plugins: [jsoncPlugin],
+})
+```
+
+## Example
+
+```jsonc
+{
+  "app": {
+    // JSONC keeps configuration comments close to the values.
+    "port": 3000
+  },
+  "features": ["api", "metrics"],
+}
+```
+
+## CLI
+
+```sh
+npx zooconfig --plugin @zooconfig/jsonc --config ./zooconfig.jsonc
+```

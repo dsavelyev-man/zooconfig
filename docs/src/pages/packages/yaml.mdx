@@ -1,0 +1,41 @@
+# YAML
+
+The YAML plugin handles `.yaml` and `.yml` files and supports overlays such as `zooconfig.production.yaml` and `zooconfig.local.yml`.
+
+## Install
+
+```sh
+npm install @zooconfig/core @zooconfig/yaml
+```
+
+## Use
+
+```ts
+import { loadConfig } from '@zooconfig/core'
+import yamlPlugin from '@zooconfig/yaml'
+
+const config = await loadConfig({
+  plugins: [yamlPlugin],
+})
+```
+
+## Example
+
+```yaml
+app:
+  name: yaml-example
+  url: http://${HOST:-localhost}:${PORT:-3000}
+database:
+  url: postgres://localhost/example
+  pool: 10
+$env:
+  production:
+    database:
+      pool: 50
+```
+
+## CLI
+
+```sh
+npx zooconfig --plugin @zooconfig/yaml --config ./zooconfig.yaml
+```

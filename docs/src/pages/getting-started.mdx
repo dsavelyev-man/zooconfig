@@ -1,0 +1,92 @@
+# Getting started
+
+Zooconfig works with any Node.js project that supports ES modules. Install `@zooconfig/core` and add a parser plugin for each file format you want to use.
+
+## Install
+
+For JSON configs, install the core package only:
+
+```sh
+npm install @zooconfig/core
+```
+
+For YAML, install both packages:
+
+```sh
+npm install @zooconfig/core @zooconfig/yaml
+```
+
+The core package always includes a JSON parser. Other formats are opt-in.
+
+## Create a config
+
+Create `zooconfig.yaml` in your project:
+
+```yaml
+app:
+  name: example
+  port: 3000
+database:
+  url: postgres://localhost/example
+  pool: 10
+$env:
+  production:
+    app:
+      port: 8080
+    database:
+      pool: 50
+```
+
+The `$env` object is not part of the final config. When the active environment is `production`, its contents are merged over the base config.
+
+## Load it
+
+```ts
+import { loadConfig } from '@zooconfig/core'
+import yamlPlugin from '@zooconfig/yaml'
+
+const config = await loadConfig({
+  plugins: [yamlPlugin],
+})
+
+console.log(config.app.port)
+```
+
+`loadConfig()` discovers the config relative to `process.cwd()` by default. Pass `cwd`, `file`, or `env` when you need explicit control:
+
+```ts
+const config = await loadConfig({
+  cwd: '/srv/my-app',
+  file: './config/app.yaml',
+  env: 'staging',
+  plugins: [yamlPlugin],
+})
+```
+
+## Use JSON without a plugin
+
+```json
+{
+  "app": {
+    "name": "example",
+    "port": 3000
+  },
+  "$env": {
+    "production": {
+      "app": { "port": 8080 }
+    }
+  }
+}
+```
+
+```ts
+import { loadConfig } from '@zooconfig/core'
+
+const config = await loadConfig()
+```
+
+## Next steps
+
+- Set up [configuration discovery and overlays](/configuration).
+- Add [environment variable overrides](/environment).
+- Validate the result with [Zod or a custom validator](/validation).

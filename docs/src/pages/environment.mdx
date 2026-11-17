@@ -1,0 +1,124 @@
+# Environment variables
+
+Zooconfig combines environment-specific config files, dotenv files, `process.env`, environment variable overrides, and string interpolation.
+
+## `$env` blocks and overlays
+
+Use `$env` for a small amount of environment-specific config inside one file:
+
+```yaml
+app:
+  port: 3000
+$env:
+  production:
+    app:
+      port: 8080
+```
+
+Use separate overlays when an environment needs its own file:
+
+```text
+zooconfig.yaml
+zooconfig.production.yaml
+zooconfig.local.yaml
+zooconfig.production.local.yaml
+```
+
+The active environment defaults to `NODE_ENV`, then `development`:
+
+```sh
+NODE_ENV=production node app.js
+```
+
+You can also set it explicitly:
+
+```ts
+await loadConfig({ env: 'production', plugins: [yamlPlugin] })
+```
+
+## Dotenv
+
+Core reads these files relative to `cwd`:
+
+```text
+.env
+.env.<environment>
+.env.local
+.env.<environment>.local
+```
+
+Later files win. Zooconfig parses them in memory and **does not mutate `process.env`**. Real process variables always win over dotenv values.
+
+Disable dotenv loading with:
+
+```ts
+await loadConfig({ dotenv: false })
+```
+
+To use a `.env` file as the config object itself, add the
+[`@zooconfig/dotenv`](/packages/dotenv) parser plugin and pass the file
+explicitly.
+
+## Environment variable overrides
+
+Environment variables prefixed with `APP_` override matching nested config keys. Use `__` to create path segments:
+
+```sh
+APP_APP__PORT=4000 APP_DATABASE__POOL=100 node app.js
+```
+
+The suffixes are converted to lowercase, so the values above update `app.port` and `database.pool`.
+
+Change the prefix and separator when needed:
+
+```ts
+await loadConfig({
+  envPrefix: 'MYSERVICE_',
+  envSeparator: '___',
+})
+```
+
+Override values are coerced to:
+
+- `true` and `false` as booleans
+- `null` as `null`
+- decimal and exponent numbers as numbers
+- JSON arrays and objects when the value parses as JSON
+- everything else as a string
+
+An empty value becomes an empty string.
+
+## Interpolation
+
+String values can reference environment variables:
+
+```yaml
+url: http://${HOST:-localhost}:${PORT:-3000}
+```
+
+References support an optional fallback after `:-`. Interpolation runs after overrides, so it sees both dotenv values and `process.env`.
+
+Missing variables throw by default:
+
+```ts
+await loadConfig()
+```
+
+Choose a different missing-value policy:
+
+```ts
+await loadConfig({ missingEnv: 'empty' })
+await loadConfig({ missingEnv: 'ignore' })
+```
+
+- `throw` raises `EnvExpansionError`
+- `empty` replaces the reference with an empty string
+- `ignore` leaves the reference untouched
+
+Escape a literal reference with a backslash:
+
+```yaml
+literal: \${DO_NOT_EXPAND}
+```
+
+Disable interpolation entirely with `expandEnv: false`.

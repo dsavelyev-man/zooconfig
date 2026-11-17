@@ -1,0 +1,25 @@
+{
+  "name": "@zooconfig/monorepo",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "workspaces": [
+    "packages/*",
+    "docs"
+  ],
+  "scripts": {
+    "build": "npm run build -w @zooconfig/core && npm run build -w @zooconfig/dotenv && npm run build -w @zooconfig/jsonc && npm run build -w @zooconfig/js && npm run build -w @zooconfig/toml && npm run build -w @zooconfig/yaml",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "typecheck": "npm run build -w @zooconfig/core && tsc -p tsconfig.json --noEmit",
+    "audit": "npm audit",
+    "docs:dev": "npm run dev -w @zooconfig/docs --",
+    "docs:build": "npm run build -w @zooconfig/docs --",
+    "docs:preview": "npm run preview -w @zooconfig/docs --"
+  },
+  "devDependencies": {
+    "@types/node": "^24.10.1",
+    "typescript": "^5.9.3",
+    "vitest": "^5.1.0"
+  }
+}

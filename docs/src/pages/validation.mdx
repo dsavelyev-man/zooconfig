@@ -1,0 +1,90 @@
+# Validation
+
+Validation is the last step in resolving a config. Plugins, overlays, environment blocks, environment overrides, and interpolation all run before the validator sees the value.
+
+## Zod-compatible schemas
+
+A schema needs either `safeParse(input)` or `parse(input)`. Zod schemas work directly:
+
+```ts
+import { z } from 'zod'
+import { loadConfig } from '@zooconfig/core'
+import yamlPlugin from '@zooconfig/yaml'
+
+const schema = z.object({
+  app: z.object({
+    port: z.number().int().positive(),
+  }),
+  database: z.object({
+    url: z.string().url(),
+    pool: z.number().int().positive(),
+  }),
+})
+
+const config = await loadConfig({
+  schema,
+  plugins: [yamlPlugin],
+})
+```
+
+If `safeParse` is present, Zooconfig uses it. A failed result is wrapped in `ConfigValidationError`. If only `parse` exists, it may be synchronous or asynchronous.
+
+The validated return value becomes the final config, so schemas can transform or strip values.
+
+## Custom validation
+
+Pass `validate()` for custom parsing or transformation:
+
+```ts
+const config = await loadConfig({
+  validate(input) {
+    if (typeof input !== 'object' || input === null) {
+      throw new Error('Config must be an object')
+    }
+
+    return input as {
+      app: { port: number }
+    }
+  },
+})
+```
+
+`validate()` may be async. Its return value is used as-is.
+
+## Ordering
+
+When both are provided, `schema` runs first and `validate` receives its result:
+
+```ts
+await loadConfig({
+  schema,
+  validate(config) {
+    return { ...config, loadedAt: new Date() }
+  },
+})
+```
+
+Both validators can throw, and both failures are reported as `ConfigValidationError`.
+
+## Errors
+
+Import the error classes from the core package:
+
+```ts
+import {
+  ConfigNotFoundError,
+  ConfigParseError,
+  ConfigValidationError,
+  EnvExpansionError,
+  ZooconfigError,
+} from '@zooconfig/core'
+```
+
+Every `ZooconfigError` has a `code` and an optional `file`:
+
+| Class | Code |
+| --- | --- |
+| `ConfigNotFoundError` | `CONFIG_NOT_FOUND` |
+| `ConfigParseError` | `CONFIG_PARSE_ERROR` |
+| `ConfigValidationError` | `CONFIG_VALIDATION_ERROR` |
+| `EnvExpansionError` | `ENV_EXPANSION_ERROR` |

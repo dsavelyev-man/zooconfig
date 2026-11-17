@@ -1,0 +1,47 @@
+{
+  "name": "@zooconfig/core",
+  "version": "0.1.0",
+  "description": "Plugin-based Node.js configuration loader. Core parses JSON and composes parsers supplied by plugins.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "module": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js",
+      "default": "./dist/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "bin": {
+    "zooconfig": "./dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "typecheck": "tsc -p tsconfig.json --noEmit"
+  },
+  "keywords": [
+    "config",
+    "configuration",
+    "node",
+    "typescript",
+    "json",
+    "dotenv",
+    "environment",
+    "plugin"
+  ],
+  "engines": {
+    "node": ">=18.18"
+  },
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "^17.2.3"
+  },
+  "sideEffects": false
+}

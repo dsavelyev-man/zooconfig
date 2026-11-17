@@ -1,0 +1,133 @@
+# Configuration
+
+Zooconfig searches for a base config, splits its environment-specific values, applies overlays, and then resolves environment variables. The order is intentionally fixed so the final value is easy to reason about.
+
+## Discovery
+
+`loadConfig()` searches the current directory and its parents for:
+
+- `zooconfig.config.<extension>`
+- `zooconfig.<extension>`
+- `app.config.<extension>`
+- `package.json#zooconfig`
+
+Discovery extensions are `.json` plus every extension registered by a plugin. For each config name, the `.config` form is checked before the plain form. Directories are checked from the working directory upward.
+
+Disable parent traversal or narrow the search:
+
+```ts
+await loadConfig({
+  cwd: './services/api',
+  searchUp: false,
+  names: ['config'],
+  extensions: ['.yaml'],
+  plugins: [yamlPlugin],
+})
+```
+
+Or skip discovery entirely with an explicit file:
+
+```ts
+await loadConfig({
+  file: './config/app.toml',
+  plugins: [tomlPlugin],
+})
+```
+
+An explicit path without an extension is resolved by trying the registered extensions in order.
+
+## Precedence
+
+Layers are applied in this order, with later layers winning:
+
+1. Base config file
+2. Its matching `$env[environment]` block
+3. `zooconfig.<environment>.<ext>`
+4. `zooconfig.local.<ext>`
+5. `zooconfig.<environment>.local.<ext>`
+6. Environment variables with the configured prefix
+
+Overlays use the base filename. For `config/app.yaml`, the overlay names are `config/app.production.yaml`, `config/app.local.yaml`, and `config/app.production.local.yaml`. If no overlay with the base extension exists, registered alternative extensions are tried.
+
+The active environment defaults to `NODE_ENV`, then `development`.
+
+```ts
+const config = await loadConfig({
+  env: 'production',
+  plugins: [yamlPlugin],
+})
+```
+
+## Merging
+
+Configuration layers are deep-merged when both sides are plain objects. Values from a later layer replace earlier values.
+
+```json
+{
+  "database": {
+    "url": "postgres://localhost/app",
+    "pool": 10
+  }
+}
+```
+
+```json
+{
+  "database": {
+    "pool": 50
+  }
+}
+```
+
+The result is:
+
+```json
+{
+  "database": {
+    "url": "postgres://localhost/app",
+    "pool": 50
+  }
+}
+```
+
+Arrays replace the previous value by default. Set `mergeArrays: true` to concatenate them:
+
+```ts
+await loadConfig({
+  mergeArrays: true,
+})
+```
+
+A scalar, array, or `null` overrides an object because only object-to-object merges are deep.
+
+## Environment blocks
+
+Any config object can include `$env`:
+
+```yaml
+feature:
+  enabled: false
+$env:
+  production:
+    feature:
+      enabled: true
+```
+
+`$env` is removed from the final object. The block for the active environment is applied immediately after that file. This also works in overlay files.
+
+## Metadata
+
+Use `loadConfigWithMeta()` when you need to inspect how the config was resolved:
+
+```ts
+import { loadConfigWithMeta } from '@zooconfig/core'
+
+const result = await loadConfigWithMeta({ plugins: [yamlPlugin] })
+
+console.log(result.config)
+console.log(result.env)
+console.log(result.cwd)
+console.log(result.files)
+```
+
+`files` contains the base file followed by every overlay that was actually loaded.

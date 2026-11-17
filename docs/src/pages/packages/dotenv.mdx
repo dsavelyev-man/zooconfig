@@ -1,0 +1,65 @@
+# Dotenv
+
+The dotenv plugin reads `.env`-formatted files as configuration objects. It is
+separate from core's built-in dotenv environment loading:
+
+- **Core dotenv loading** reads `.env` files into environment variables used by
+  interpolation and `APP_*` overrides.
+- **`@zooconfig/dotenv`** parses a `.env`-formatted file as the config object.
+
+## Install
+
+```sh
+npm install @zooconfig/core @zooconfig/dotenv
+```
+
+## Use
+
+```ts
+import { loadConfig } from '@zooconfig/core'
+import dotenvPlugin from '@zooconfig/dotenv'
+
+const config = await loadConfig({
+  file: './config.env',
+  plugins: [dotenvPlugin],
+})
+```
+
+A literal `.env` file is also supported when passed explicitly:
+
+```ts
+const config = await loadConfig({
+  file: './.env',
+  plugins: [dotenvPlugin],
+})
+```
+
+## Example
+
+```dotenv
+NAME=zooconfig
+PORT=3000
+DATABASE_URL="postgres://localhost/example"
+```
+
+```ts
+const config = await loadConfig({
+  file: './.env',
+  plugins: [dotenvPlugin],
+})
+
+// {
+//   NAME: 'zooconfig',
+//   PORT: '3000',
+//   DATABASE_URL: 'postgres://localhost/example'
+// }
+```
+
+Values remain strings, matching dotenv semantics. Use a schema or `validate()`
+when you need numbers, booleans, or a transformed object shape.
+
+## CLI
+
+```sh
+npx zooconfig --plugin @zooconfig/dotenv --config ./.env
+```

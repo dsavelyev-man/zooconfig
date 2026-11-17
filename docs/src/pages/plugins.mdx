@@ -1,0 +1,77 @@
+# Parser plugins
+
+A parser plugin teaches Zooconfig how to read one or more file extensions. The core registry always starts with JSON, then adds the plugins you pass to `loadConfig()`.
+
+## Use a plugin
+
+```ts
+import { loadConfig } from '@zooconfig/core'
+import yamlPlugin from '@zooconfig/yaml'
+
+const config = await loadConfig({
+  plugins: [yamlPlugin],
+})
+```
+
+Install every plugin whose extensions you want to load:
+
+```ts
+import { loadConfig } from '@zooconfig/core'
+import dotenvPlugin from '@zooconfig/dotenv'
+import jsoncPlugin from '@zooconfig/jsonc'
+import jsPlugin from '@zooconfig/js'
+import tomlPlugin from '@zooconfig/toml'
+import yamlPlugin from '@zooconfig/yaml'
+
+const config = await loadConfig({
+  plugins: [dotenvPlugin, jsoncPlugin, jsPlugin, tomlPlugin, yamlPlugin],
+})
+```
+
+## Plugin contract
+
+A plugin is a plain object with a name, one or more extensions, and a parser:
+
+```ts
+import type { ZooconfigPlugin } from '@zooconfig/core'
+
+const customPlugin = {
+  name: 'custom',
+  extensions: ['.custom'],
+  parse(source, context) {
+    return parseCustomFormat(source, context)
+  },
+} satisfies ZooconfigPlugin
+
+const config = await loadConfig({
+  plugins: [customPlugin],
+})
+```
+
+`parse()` receives the raw source and a context containing `env`, `cwd`, `file`, and `source`. It may return a value or a promise, and the result must be a plain config object.
+
+The core then applies `$env`, overlays, environment overrides, interpolation, and validation as usual.
+
+## Rules
+
+- Plugin names must be non-empty.
+- Each plugin must register at least one extension.
+- Each plugin must provide a `parse()` function.
+- Two plugins cannot register the same extension. JSON is already registered by core.
+- Plugins are composed in the order passed to `loadConfig()`.
+
+Extensions without a leading dot are normalized, and matching is case-insensitive.
+
+## JavaScript and TypeScript module results
+
+The JavaScript plugin supports exported objects, promises, and functions. A factory receives the parser context:
+
+```ts
+export default async ({ env, cwd }: { env: string; cwd: string }) => ({
+  env,
+  cwd,
+  production: env === 'production',
+})
+```
+
+JavaScript and TypeScript configs execute code. Only load trusted files.

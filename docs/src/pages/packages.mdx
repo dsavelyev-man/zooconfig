@@ -1,0 +1,27 @@
+# Package overview
+
+Zooconfig is published as an npm-workspaces monorepo under the `@zooconfig/*` scope.
+
+| Package | Purpose | Extensions |
+| --- | --- | --- |
+| `@zooconfig/core` | Loader, discovery, overlays, dotenv, env overrides, validation, CLI | `.json` |
+| `@zooconfig/dotenv` | Dotenv config-file parser | `.env` |
+| `@zooconfig/jsonc` | JSON with comments and trailing commas | `.jsonc` |
+| `@zooconfig/js` | JavaScript and TypeScript via jiti | `.js`, `.mjs`, `.cjs`, `.ts`, `.mts`, `.cts`, `.jsx`, `.tsx` |
+| `@zooconfig/toml` | TOML via `smol-toml` | `.toml` |
+| `@zooconfig/yaml` | YAML via `yaml` | `.yaml`, `.yml` |
+
+## Choose what to install
+
+```sh
+# JSON only
+npm install @zooconfig/core
+
+# YAML
+npm install @zooconfig/core @zooconfig/yaml
+
+# All parser formats
+npm install @zooconfig/core @zooconfig/dotenv @zooconfig/jsonc @zooconfig/js @zooconfig/toml @zooconfig/yaml
+```
+
+Core includes JSON parsing and dotenv environment loading. Extra config-file parsers and dependencies are only installed when you opt into them.
