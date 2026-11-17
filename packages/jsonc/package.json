@@ -1,6 +1,6 @@
 {
   "name": "@zooconfig/jsonc",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "homepage": "https://zooconfig.vercel.app/",
   "description": "JSONC parser plugin for @zooconfig/core.",
   "type": "module",
