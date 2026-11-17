@@ -247,6 +247,10 @@ npm run audit
 
 Build output is written to each package's `dist/` directory.
 
+## Contributors
+
+See [CONTRIBUTORS.md](./CONTRIBUTORS.md).
+
 ## License
 
 MIT
